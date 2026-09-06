@@ -1,0 +1,199 @@
+# Sveltia CMS configuration for the Data Lab website.
+# Sign in at /admin/ with "Sign In Using Access Token" using a GitHub personal access token
+# that has the `repo` scope (fine-grained: Contents read/write on this repository).
+
+backend:
+  name: github
+  repo: TowheedB/DataLab      # change if the repository moves
+  branch: main
+  skip_ci: false               # each save triggers the GitHub Actions rebuild
+
+site_url: https://towheedb.github.io/DataLab/
+display_url: https://towheedb.github.io/DataLab/
+logo_url: ../assets/logo.svg
+
+media_folder: assets/uploads
+public_folder: assets/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ------------------------------------------------------------ Publications
+  - name: publications
+    label: Publications
+    label_singular: Publication
+    folder: content/publications
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{year}}-{{slug}}"
+    identifier_field: title
+    summary: "{{year}} · {{title}}"
+    sortable_fields: [year, title, type]
+    view_groups:
+      - label: Year
+        field: year
+      - label: Type
+        field: type
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: year, label: Year, widget: number, value_type: int, min: 1990, max: 2100 }
+      - name: type
+        label: Type
+        widget: select
+        options:
+          - { label: Journal article, value: journal }
+          - { label: Conference paper, value: conference }
+          - { label: Edited special issue, value: edited }
+      - { name: authors, label: Authors, widget: string, hint: "Comma-separated, in publication order. Dr. Ensan's name is bolded automatically." }
+      - { name: venue, label: Venue, widget: string, hint: "Journal (with volume/pages) or conference name and location." }
+      - { name: doi, label: DOI, widget: string, required: false, hint: "Just the DOI, e.g. 10.1145/3678003 — not the full URL." }
+      - name: area
+        label: Research theme
+        widget: relation
+        collection: areas
+        value_field: key
+        display_fields: [title]
+        search_fields: [title]
+      - { name: tags, label: Tags, widget: list, required: false, hint: "Short keywords shown under the paper." }
+      - { name: order, label: Order within year, widget: number, value_type: int, default: 1, required: false, hint: "Lower numbers appear first within the same year." }
+      - { name: body, label: Abstract, widget: markdown, required: false, minimal: true, buttons: [bold, italic, link], editor_components: [] }
+
+  # ------------------------------------------------------------------ People
+  - name: people
+    label: Students & Alumni
+    label_singular: Person
+    folder: content/people
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{group}}-{{slug}}"
+    identifier_field: name
+    summary: "{{name}} — {{group}}"
+    sortable_fields: [name, group]
+    view_groups:
+      - label: Program
+        field: group
+    fields:
+      - { name: name, label: Full name, widget: string }
+      - name: group
+        label: Program
+        widget: select
+        options:
+          - { label: Postdocs & Research Associates, value: postdoc }
+          - { label: PhD, value: phd }
+          - { label: Master's, value: masters }
+          - { label: Undergraduate, value: undergrad }
+      - { name: current, label: Current member?, widget: boolean, default: true, hint: "Current members are listed before alumni." }
+      - { name: order, label: Order, widget: number, value_type: int, required: false, default: 100 }
+
+  # --------------------------------------------------------- Research themes
+  - name: areas
+    label: Research themes
+    label_singular: Research theme
+    folder: content/areas
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{key}}"
+    identifier_field: title
+    summary: "{{order}} · {{title}}"
+    fields:
+      - { name: key, label: Key, widget: string, pattern: ["^[a-z0-9-]+$", "lowercase letters, numbers and dashes only"], hint: "Short id used in links, e.g. kg, bio. Don't change after publications reference it." }
+      - { name: title, label: Title, widget: string }
+      - { name: order, label: Order, widget: number, value_type: int, default: 1 }
+      - name: icon
+        label: Icon
+        widget: select
+        options: [graph, search, document, shield, brain, chat]
+      - { name: summary, label: One-line summary, widget: text, hint: "Shown on the home page cards and at the top of the theme section." }
+      - { name: body, label: Description, widget: markdown, minimal: true, buttons: [bold, italic, link], editor_components: [] }
+
+  # -------------------------------------------------------------------- Pages
+  - name: pages
+    label: Pages
+    files:
+      - name: home
+        label: Home page
+        file: content/pages/home.yml
+        fields:
+          - { name: hero_kicker, label: Small line above the title, widget: string }
+          - { name: hero_lead, label: Tagline, widget: text }
+          - { name: recent_count, label: Number of recent publications to show, widget: number, value_type: int, default: 5, min: 1, max: 10 }
+          - { name: cta_title, label: Bottom banner title, widget: string }
+          - { name: cta_text, label: Bottom banner text, widget: text }
+
+      - name: about
+        label: About the Lab
+        file: content/pages/about.md
+        fields:
+          - { name: title, label: Page title, widget: string }
+          - { name: body, label: Introduction, widget: markdown, hint: "Use '## Heading' for section headings." }
+          - name: timeline
+            label: History timeline
+            widget: list
+            summary: "{{fields.when}} — {{fields.title}}"
+            fields:
+              - { name: when, label: When, widget: string, hint: "e.g. 2019 or 2020–2022" }
+              - { name: title, label: Title, widget: string }
+              - { name: text, label: Text, widget: text }
+          - { name: awards, label: Awards & honours, widget: list, hint: "One per line; **bold** allowed." }
+          - { name: roles, label: Community roles, widget: list, hint: "One per line; *italics* allowed." }
+
+      - name: join
+        label: Join Us
+        file: content/pages/join.md
+        fields:
+          - { name: title, label: Page title, widget: string }
+          - name: cards
+            label: Cards
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: text, label: Text, widget: markdown, minimal: true, buttons: [bold, italic, link], editor_components: [] }
+          - { name: how_to_apply_title, label: Bottom box title, widget: string, default: How to apply }
+          - { name: body, label: Bottom box text, widget: markdown, minimal: true, buttons: [bold, italic, link], editor_components: [] }
+
+  # ----------------------------------------------------------------- Settings
+  - name: settings
+    label: Site settings
+    files:
+      - name: settings
+        label: Site settings
+        file: content/settings.yml
+        fields:
+          - { name: site_name, label: Site name, widget: string }
+          - { name: university, label: University, widget: string }
+          - { name: university_url, label: University website, widget: string }
+          - { name: department, label: Department, widget: string }
+          - { name: address, label: Address, widget: text }
+          - { name: email, label: Contact email, widget: string }
+          - { name: scholar_url, label: Google Scholar URL, widget: string }
+          - name: director
+            label: Director
+            widget: object
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: title, label: Title, widget: string }
+              - { name: initials, label: Initials (avatar), widget: string }
+              - { name: home_blurb, label: Home page blurb, widget: markdown, minimal: true, buttons: [bold, italic, link], editor_components: [] }
+              - { name: bio, label: Short bio (About page sidebar), widget: markdown, minimal: true, buttons: [bold, italic, link], editor_components: [] }
+          - name: links
+            label: Online profiles
+            widget: list
+            summary: "{{fields.label}}"
+            hint: "The first four also appear in the footer; the first two in the About sidebar."
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: url, label: URL, widget: string }
+          - name: groups
+            label: Student groups (tabs)
+            widget: list
+            summary: "{{fields.label}}"
+            hint: "Keys must match the Program options: postdoc, phd, masters, undergrad."
+            fields:
+              - { name: key, label: Key, widget: string }
+              - { name: label, label: Label, widget: string }

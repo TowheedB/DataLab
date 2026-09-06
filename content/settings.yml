@@ -1,0 +1,37 @@
+site_name: Data Lab
+university: Toronto Metropolitan University
+department: Department of Electrical, Computer and Biomedical Engineering
+address: '350 Victoria Street
+
+  Toronto, Ontario M5B 2K3
+
+  Canada'
+email: fensan@torontomu.ca
+university_url: https://www.torontomu.ca/
+scholar_url: https://scholar.google.com/citations?user=kg0__6QAAAAJ
+director:
+  name: Dr. Faezeh Ensan
+  title: Associate Professor, P.Eng.
+  initials: FE
+  home_blurb: Dr. Ensan leads the Data Lab at Toronto Metropolitan University. Her research spans knowledge modeling and semantic reasoning, text processing and retrieval, biomedical scholarly search, and responsible neural text models. She received the Dean's Teaching Award in 2023 and serves on the editorial board of *Discover Artificial Intelligence*, having guest-edited special issues of *Information Processing & Management* and the *Journal of Biomedical Informatics*.
+  bio: PhD in Computer Science (University of New Brunswick, 2011); MSc and BSc in Computer Engineering (Ferdowsi University of Mashhad; University of Tehran). Previously a postdoctoral fellow at UBC, Athabasca University and UNB, and Assistant Professor at Ferdowsi University of Mashhad. At TMU since 2019.
+links:
+- label: TMU faculty profile
+  url: https://www.torontomu.ca/electrical-computer-biomedical/people/faculty/faezeh-ensan/
+- label: Google Scholar
+  url: https://scholar.google.com/citations?user=kg0__6QAAAAJ
+- label: DBLP
+  url: https://dblp.org/pid/61/5189.html
+- label: ORCID
+  url: https://orcid.org/0000-0002-8891-0249
+- label: ACM Digital Library
+  url: https://dl.acm.org/profile/81317493281
+groups:
+- key: postdoc
+  label: Postdocs & Research Associates
+- key: phd
+  label: PhD
+- key: masters
+  label: Master's
+- key: undergrad
+  label: Undergraduate
